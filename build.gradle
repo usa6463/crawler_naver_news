@@ -23,6 +23,7 @@ repositories {
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
     implementation 'com.google.guava:guava:27.0.1-jre'
+    compile 'org.jsoup:jsoup:1.7.3'
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
