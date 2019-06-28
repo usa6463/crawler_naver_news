@@ -12,7 +12,11 @@ public class Crawler {
 
         try {
             Document doc = Jsoup.connect(url).get();
-            System.out.println(doc);
+            Elements links = doc.select("a[href]");
+
+            for(Element link : links){
+                System.out.println(link.attr("href"));
+            }
         } catch(Exception e) {
             System.out.println(e.getMessage());
         }
