@@ -75,21 +75,10 @@ public class Scheduler {
 
             for(Element link : links){
                 String href = link.attr("href");
-                Pattern p = Pattern.compile("\\S{1,100}oid=\\d{1,100}&aid=\\d{1,100}.*");
-                boolean news_check = p.matcher(href).find();
-
-                p = Pattern.compile("^/main.*");
-                boolean main_start_check = p.matcher(href).find();
-                if(news_check && main_start_check){
-                    href = "https://news.naver.com" + href;
+                href = parsing_url(href, SEED);
+                if(href != null){
+                    q.add(href);
                 }
-                if(news_check){
-                    news_list.add(href);
-                } 
-            }
-
-            for(String link : news_list){
-                System.out.println(link);
             }
         } catch(Exception e) {
             System.out.println(e.getMessage());
@@ -97,10 +86,9 @@ public class Scheduler {
     }
 
     public void run() {
-        
-
-        
-
-       
+        get_seed();
+        for(String s : this.q){
+            System.out.println(s);
+        }
     }
 }
