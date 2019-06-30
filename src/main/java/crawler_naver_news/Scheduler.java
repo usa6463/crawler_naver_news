@@ -18,11 +18,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ArrayList;
 
-public class Crawler {
+public class Scheduler {
     Queue<String> q;
     String SEED = "https://news.naver.com";
 
-    public Crawler(){
+    public Scheduler(){
         this.q = new LinkedList<String>();
     }
 
@@ -34,7 +34,13 @@ public class Crawler {
         // 도메인을 가진 경우 
         p = Pattern.compile("^"+SEED);
         if(p.matcher(url).find()){
-            
+
+            // 가장 많이본 뉴스 처리 
+            p = Pattern.compile("&date=\\d{1,100}&type=\\d{1,100}&rankingSeq=\\d{1,100}&rankingSectionId=\\d{1,100}");
+            Matcher m = p.matcher(url);
+            if(m.find()){
+                result = m.replaceAll("");
+            }
         }
         // 도메인을 가지지 않은 경우 
         else{

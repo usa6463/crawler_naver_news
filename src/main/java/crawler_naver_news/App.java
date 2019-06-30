@@ -6,7 +6,7 @@ package crawler_naver_news;
 public class App {
 
     public static void main(String[] args) {
-        Crawler crawler = new Crawler();
-        crawler.run();
+        Scheduler scheduler = new Scheduler();
+        scheduler.run();
     }
 }
