@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class Slave implements Runnable  {
-    Crawler crawler;
-    public Slave(Crawler crawler){
-        this.crawler = crawler;
+    Scheduler scheduler;
+    public Slave(Scheduler scheduler){
+        this.scheduler = scheduler;
     }
 
     public void run() {

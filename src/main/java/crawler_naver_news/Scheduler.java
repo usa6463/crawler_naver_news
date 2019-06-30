@@ -26,25 +26,30 @@ public class Scheduler {
         this.q = new LinkedList<String>();
     }
 
-    // 잘못된 url일 경우 null 반환.
+    // if wrong url, this method will return null
     public String parsing_url(String url, String now_url){
         Pattern p = null;
         String result = url;
 
-        // 도메인을 가진 경우 
-        p = Pattern.compile("^"+SEED);
+        // if url has domain
+        p = Pattern.compile("^http");
         if(p.matcher(url).find()){
 
-            // 가장 많이본 뉴스 처리 
+            p = Pattern.compile("://news.naver.com");
+            if(!p.matcher(url).find()){
+                result = "";
+            }
+
+            // most high views 
             p = Pattern.compile("&date=\\d{1,100}&type=\\d{1,100}&rankingSeq=\\d{1,100}&rankingSectionId=\\d{1,100}");
             Matcher m = p.matcher(url);
             if(m.find()){
                 result = m.replaceAll("");
             }
         }
-        // 도메인을 가지지 않은 경우 
+        // if url does not have domain
         else{
-            Pattern p1 = Pattern.compile("^#");
+            Pattern p1 = Pattern.compile("^#&");
             Pattern p2 = Pattern.compile("^/");
             Pattern p3 = Pattern.compile("^?");
             if(p1.matcher(url).find()){
@@ -54,14 +59,17 @@ public class Scheduler {
                 result = SEED + url;
             }
             else if(p3.matcher(url).find()){
-                p = Pattern.compile("?.*");
+                p = Pattern.compile("\\?.*");
                 Matcher m = p.matcher(now_url);
                 result = m.replaceAll(url);
             }
             else{
-                System.out.println("Error : " + url);
-                result = null;
+                result = "";
             }
+        }
+
+        if(result.equals(now_url) || result.equals(now_url+"/") || (result+"/").equals(now_url)){
+            result = "";
         }
         return result;
     }
@@ -76,8 +84,11 @@ public class Scheduler {
             for(Element link : links){
                 String href = link.attr("href");
                 href = parsing_url(href, SEED);
-                if(href != null){
+                if(!href.equals("")){
                     q.add(href);
+                }
+                else{
+                    // System.out.println(link.attr("href"));
                 }
             }
         } catch(Exception e) {
