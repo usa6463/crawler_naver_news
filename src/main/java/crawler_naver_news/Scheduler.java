@@ -27,7 +27,8 @@ public class Scheduler {
     }
 
     // if wrong url, this method will return null
-    public String parsing_url(String url, String now_url){
+    // change url to more proper url.
+    public static String parsing_url(String url, String now_url){
         Pattern p = null;
         String result = url;
 
@@ -56,7 +57,7 @@ public class Scheduler {
                 result = now_url + url;
             }
             else if(p2.matcher(url).find()){
-                result = SEED + url;
+                result = "https://news.naver.com" + url;
             }
             else if(p3.matcher(url).find()){
                 p = Pattern.compile("\\?.*");
@@ -91,15 +92,22 @@ public class Scheduler {
                     // System.out.println(link.attr("href"));
                 }
             }
+            
         } catch(Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
     public void run() {
-        get_seed();
-        for(String s : this.q){
-            System.out.println(s);
+        while(true){
+            if(q.isEmpty()){
+                get_seed();
+            }
+            else{
+                String next_href = q.poll();
+                Slave s = new Slave(this, next_href);
+                s.run();
+            }
         }
     }
 }
