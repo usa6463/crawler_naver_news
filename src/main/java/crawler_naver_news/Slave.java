@@ -44,17 +44,19 @@ public class Slave implements Runnable  {
     }
 
     public void news_parser(String url){
-        // get oid, aid
-        Pattern p = Pattern.compile("&oid=(\\d{1,100})&aid=(\\d{1,100})");
-        Matcher m = p.matcher(url);
-        String oid = m.group(1);
-        String aid = m.group(2);
-        BufferedReader br = null;
-
         boolean flag = true;
+        BufferedReader br = null;
+        String oid = null;
+        String aid = null;
 
         // read csv, find oid & aid
         try{
+            // get oid, aid
+            Pattern p = Pattern.compile("&oid=(\\d{1,100})&aid=(\\d{1,100})");
+            Matcher m = p.matcher(url);
+            oid = m.group(1);
+            aid = m.group(2);
+        
             br = Files.newBufferedReader(Paths.get(this.file));
             Charset.forName("UTF-8");
             String line = "";
@@ -66,9 +68,7 @@ public class Slave implements Runnable  {
                     flag = false;
                 }
             }
-        }catch(FileNotFoundException e){
-            e.printStackTrace();
-        }catch(IOException e){
+        }catch(Exception e){
             e.printStackTrace();
         }finally{
             try{
@@ -106,6 +106,7 @@ public class Slave implements Runnable  {
 
     public void run() {
         if(news_check(this.href)){
+            System.out.println("this is news : " + this.href);
             news_parser(this.href);
         }
 

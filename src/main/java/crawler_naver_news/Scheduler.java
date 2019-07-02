@@ -99,12 +99,17 @@ public class Scheduler {
     }
 
     public void run() {
+        int loop_num = 1;
         while(true){
+            System.out.println("scheduler loop : " + Integer.toString(loop_num));
+
             if(q.isEmpty()){
+                System.out.println("scheduler empty");
                 get_seed();
             }
             else{
                 String next_href = q.poll();
+                System.out.println("give href to slave : " + next_href);
                 Slave s = new Slave(this, next_href);
                 s.run();
             }
