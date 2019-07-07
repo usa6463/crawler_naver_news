@@ -113,6 +113,7 @@ public class Scheduler {
                 Slave s = new Slave(this, next_href);
                 s.run();
             }
+            loop_num++;
         }
     }
 }

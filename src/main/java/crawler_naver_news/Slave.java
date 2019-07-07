@@ -38,9 +38,11 @@ public class Slave implements Runnable  {
     }
 
     public boolean news_check(String url){
-        Pattern p = Pattern.compile("&oid=\\d{1,100}&aid=\\d{1,100}");
-        Matcher m = p.matcher(url);
-        return m.find();
+        Pattern p1 = Pattern.compile("read.nhn");
+        Matcher m1 = p1.matcher(url);
+        Pattern p2 = Pattern.compile("&oid=\\d{1,100}&aid=\\d{1,100}");
+        Matcher m2 = p2.matcher(url);
+        return m1.find() && m2.find();
     }
 
     public void news_parser(String url){
@@ -54,8 +56,10 @@ public class Slave implements Runnable  {
             // get oid, aid
             Pattern p = Pattern.compile("&oid=(\\d{1,100})&aid=(\\d{1,100})");
             Matcher m = p.matcher(url);
-            oid = m.group(1);
-            aid = m.group(2);
+            if(m.find()){
+                oid = m.group(1);
+                aid = m.group(2);
+            }
         
             br = Files.newBufferedReader(Paths.get(this.file));
             Charset.forName("UTF-8");
@@ -82,32 +86,40 @@ public class Slave implements Runnable  {
 
         if(flag){
             try{
+                System.out.println("access into flag : " + url);
                 Document doc = Jsoup.connect(url).get();
+                String syn = null;
 
                 // title
-                Elements e = doc.getElementsByClass("tts_head");
-                String title = e.first().toString();
+                syn = "#articleTitle";
+                Elements titles = doc.select(syn);
+                String title = titles.first().toString();
 
                 // contents
-                e = doc.getElementsByClass("_article_body_contents");
-                String contents = e.first().toString();
+                syn = "#articleBodyContents";
+                Elements contents = doc.select(syn);
+                String content = (contents.first().toString());
 
                 // BufferedWriter bufWriter = null;
                 // bufWriter = Files.newBufferedWriter(Paths.get(this.file),Charset.forName("UTF-8"));
-                FileWriter pw = new FileWriter(this.file,true); 
-                pw.append(oid+","+aid+","+title+","+contents+"\n");
+                FileWriter pw = new FileWriter(this.file,true);
+                String write_contents = oid+","+aid+","+title+","+content+"\n";
+                pw.append(write_contents);
+                System.out.println("Contents : " + write_contents);
                 
             } catch(Exception e) {
                 System.out.println(e.getMessage());
             }
-            
         }
+
+        System.out.println("write success");
     }
 
     public void run() {
         if(news_check(this.href)){
             System.out.println("this is news : " + this.href);
             news_parser(this.href);
+            return;
         }
 
         try{
@@ -118,9 +130,10 @@ public class Slave implements Runnable  {
 
             for(Element link : links){
                 String href = link.attr("href");
-                href = Scheduler.parsing_url(href, this.href);
                 if(!href.equals("")){
+                    href = Scheduler.parsing_url(href, this.href);
                     this.scheduler.q.add(href);
+                    System.out.println("give href to scheduler : " + href);
                 }
                 else{
                     // System.out.println(link.attr("href"));
