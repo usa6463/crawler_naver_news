@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.io.File;
 
 public class Slave implements Runnable  {
     Scheduler scheduler;
@@ -43,6 +44,19 @@ public class Slave implements Runnable  {
         Pattern p2 = Pattern.compile("&oid=\\d{1,100}&aid=\\d{1,100}");
         Matcher m2 = p2.matcher(url);
         return m1.find() && m2.find();
+    }
+
+    public void file_exist_check(String path){
+        File f = new File(path);
+        if(!f.exists()) { 
+            try{
+                FileWriter pw = new FileWriter(path, false);
+                pw.append("oid,aid,title,contents");
+            }
+            catch(Exception e){
+                System.out.println(e.getMessage());
+            }
+        }
     }
 
     public void news_parser(String url){
@@ -100,10 +114,14 @@ public class Slave implements Runnable  {
                 Elements contents = doc.select(syn);
                 String content = (contents.first().toString());
 
-                // BufferedWriter bufWriter = null;
-                // bufWriter = Files.newBufferedWriter(Paths.get(this.file),Charset.forName("UTF-8"));
+                Pattern p = Pattern.compile("\n");
+                Matcher m = p.matcher(content);
+                m.replaceAll(" ");
+
+                // write
                 FileWriter pw = new FileWriter(this.file,true);
                 String write_contents = oid+","+aid+","+title+","+content+"\n";
+
                 pw.append(write_contents);
                 System.out.println("Contents : " + write_contents);
                 
