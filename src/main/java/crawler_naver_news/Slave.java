@@ -109,7 +109,7 @@ public class Slave implements Runnable  {
 
                 // write
                 FileWriter pw = new FileWriter(this.file,true);
-                String write_contents = oid+","+aid+","+title+", '"+content+"'\n";
+                String write_contents = oid+","+aid+","+title+", \""+content+"\"\n";
 
                 pw.append(write_contents);
                 pw.close();
