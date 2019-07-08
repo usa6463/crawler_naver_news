@@ -18,12 +18,38 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ArrayList;
 
+// csv
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.io.File;
+
 public class Scheduler {
     Queue<String> q;
     String SEED = "https://news.naver.com";
 
     public Scheduler(){
         this.q = new LinkedList<String>();
+    }
+
+    public void file_exist_check(String path){
+        File f = new File(path);
+        if(!f.exists()) { 
+            System.out.println("no file exist");
+            try{
+                FileWriter pw = new FileWriter(path, true);
+                pw.append("oid,aid,title,contents");
+                pw.close();
+            }
+            catch(Exception e){
+                System.out.println(e.getMessage());
+            }
+        }
     }
 
     // if wrong url, this method will return null
@@ -99,6 +125,8 @@ public class Scheduler {
     }
 
     public void run() {
+        file_exist_check("D:\\news.csv");
+
         int loop_num = 1;
         while(true){
             System.out.println("scheduler loop : " + Integer.toString(loop_num));

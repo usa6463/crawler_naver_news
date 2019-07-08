@@ -46,18 +46,7 @@ public class Slave implements Runnable  {
         return m1.find() && m2.find();
     }
 
-    public void file_exist_check(String path){
-        File f = new File(path);
-        if(!f.exists()) { 
-            try{
-                FileWriter pw = new FileWriter(path, false);
-                pw.append("oid,aid,title,contents");
-            }
-            catch(Exception e){
-                System.out.println(e.getMessage());
-            }
-        }
-    }
+
 
     public void news_parser(String url){
         boolean flag = true;
@@ -119,12 +108,11 @@ public class Slave implements Runnable  {
                 content = m.replaceAll(" ");
 
                 // write
-                file_exist_check(this.file);
                 FileWriter pw = new FileWriter(this.file,true);
-                String write_contents = oid+","+aid+","+title+","+content+"\n";
+                String write_contents = oid+","+aid+","+title+", '"+content+"'\n";
 
                 pw.append(write_contents);
-                System.out.println("Contents : " + write_contents);
+                pw.close();
                 
             } catch(Exception e) {
                 System.out.println(e.getMessage());
