@@ -116,9 +116,10 @@ public class Slave implements Runnable  {
 
                 Pattern p = Pattern.compile("\n");
                 Matcher m = p.matcher(content);
-                m.replaceAll(" ");
+                content = m.replaceAll(" ");
 
                 // write
+                file_exist_check(this.file);
                 FileWriter pw = new FileWriter(this.file,true);
                 String write_contents = oid+","+aid+","+title+","+content+"\n";
 
