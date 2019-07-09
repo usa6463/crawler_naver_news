@@ -27,6 +27,8 @@ dependencies {
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
+
+    compile group: 'com.opencsv', name: 'opencsv', version: '3.7'
 }
 
 // Define the main class for the application
