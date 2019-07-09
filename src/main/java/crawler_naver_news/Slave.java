@@ -76,17 +76,6 @@ public class Slave implements Runnable  {
                }
             }
         
-            // br = Files.newBufferedReader(Paths.get(this.file));
-            // Charset.forName("UTF-8");
-            // String line = "";
-               
-            // while((line = br.readLine()) != null){
-            //     List<String> tmpList = new ArrayList<String>();
-            //     String array[] = line.split(",");
-            //     if(array[0].equals(oid) && array[1].equals(aid)){
-            //         flag = false;
-            //     }
-            // }
         }catch(Exception e){
             e.printStackTrace();
         }finally{
@@ -119,9 +108,14 @@ public class Slave implements Runnable  {
                 Matcher m = p.matcher(content);
                 content = m.replaceAll(" ");
 
+                // regist datetime
+                syn = "span.t11";
+                Elements datetimes = doc.select(syn);
+                String datetime = (datetimes.first().toString());
+
                 // write
                 CSVWriter writer = new CSVWriter(new FileWriter(this.file, true), ',');
-                String[] write_contents = {oid, aid, title, content};
+                String[] write_contents = {oid, aid, datetime, title, content};
                 writer.writeNext(write_contents);
                 writer.close();
                 

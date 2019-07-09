@@ -45,7 +45,7 @@ public class Scheduler {
             try{
                 // write
                 CSVWriter writer = new CSVWriter(new FileWriter("D:\\news.csv", true), ',');
-                String[] write_contents = {"oid", "aid", "title", "content"};
+                String[] write_contents = {"oid", "aid", "regist_datetime", "title", "content"};
                 writer.writeNext(write_contents);
                 writer.close();
             }
