@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -47,8 +48,6 @@ public class Slave implements Runnable  {
         return m1.find() && m2.find();
     }
 
-
-
     public void news_parser(String url){
         boolean flag = true;
         BufferedReader br = null;
@@ -64,18 +63,30 @@ public class Slave implements Runnable  {
                 oid = m.group(1);
                 aid = m.group(2);
             }
-        
-            br = Files.newBufferedReader(Paths.get(this.file));
-            Charset.forName("UTF-8");
-            String line = "";
-               
-            while((line = br.readLine()) != null){
-                List<String> tmpList = new ArrayList<String>();
-                String array[] = line.split(",");
-                if(array[0].equals(oid) && array[1].equals(aid)){
-                    flag = false;
-                }
+
+            CSVReader reader = new CSVReader(new FileReader(this.file));
+            String [] nextLine;
+            while ((nextLine = reader.readNext()) != null) {
+               // nextLine[] is an array of values from the line
+               String line_oid = nextLine[0];
+               String line_aid = nextLine[1];
+
+               if(line_oid.equals(oid) && line_aid.equals(aid)){
+                   flag = false;
+               }
             }
+        
+            // br = Files.newBufferedReader(Paths.get(this.file));
+            // Charset.forName("UTF-8");
+            // String line = "";
+               
+            // while((line = br.readLine()) != null){
+            //     List<String> tmpList = new ArrayList<String>();
+            //     String array[] = line.split(",");
+            //     if(array[0].equals(oid) && array[1].equals(aid)){
+            //         flag = false;
+            //     }
+            // }
         }catch(Exception e){
             e.printStackTrace();
         }finally{
