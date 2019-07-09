@@ -28,6 +28,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.File;
+import com.opencsv.*;
 
 public class Scheduler {
     Queue<String> q;
@@ -42,9 +43,11 @@ public class Scheduler {
         if(!f.exists()) { 
             System.out.println("no file exist");
             try{
-                FileWriter pw = new FileWriter(path, true);
-                pw.append("oid,aid,title,contents");
-                pw.close();
+                // write
+                CSVWriter writer = new CSVWriter(new FileWriter("D:\\news.csv", true), ',');
+                String[] write_contents = {"oid", "aid", "title", "content"};
+                writer.writeNext(write_contents);
+                writer.close();
             }
             catch(Exception e){
                 System.out.println(e.getMessage());

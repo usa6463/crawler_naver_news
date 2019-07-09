@@ -26,7 +26,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.File;
-
 import com.opencsv.*;
 
 public class Slave implements Runnable  {
@@ -111,7 +110,6 @@ public class Slave implements Runnable  {
 
                 // write
                 CSVWriter writer = new CSVWriter(new FileWriter(this.file, true), ',');
-                // FileWriter pw = new FileWriter(this.file,true);
                 String[] write_contents = {oid, aid, title, content};
                 writer.writeNext(write_contents);
                 writer.close();
