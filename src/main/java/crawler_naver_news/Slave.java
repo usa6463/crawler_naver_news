@@ -48,6 +48,40 @@ public class Slave implements Runnable  {
         return m1.find() && m2.find();
     }
 
+    public boolean url_read_check(String path, String url){
+        boolean flag = false;
+        try{
+            CSVReader reader = new CSVReader(new FileReader(path));
+            String [] nextLine;
+            while ((nextLine = reader.readNext()) != null) {
+                // nextLine[] is an array of values from the line
+                String val = nextLine[0];            
+                if(val.equals(url)){
+                    flag = true;
+                }
+            }
+            
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        return flag;
+    }
+
+    public void write_url(String path, String url){
+        // write
+        try{
+            CSVWriter writer = new CSVWriter(new FileWriter(path, true), ',');
+            String[] write_contents = {url};
+            writer.writeNext(write_contents);
+            writer.close();
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        
+    }
+
     public void news_parser(String url){
         boolean flag = true;
         BufferedReader br = null;
@@ -144,8 +178,13 @@ public class Slave implements Runnable  {
                 String href = link.attr("href");
                 if(!href.equals("")){
                     href = Scheduler.parsing_url(href, this.href);
-                    this.scheduler.q.add(href);
-                    System.out.println("give href to scheduler : " + href);
+
+                    if(!url_read_check("D:\\url_check.csv", href)){
+                        this.scheduler.q.add(href);
+                        write_url("D:\\url_check.csv", href);    
+                        System.out.println("give href to scheduler : " + href);
+                    }
+                    
                 }
                 else{
                     // System.out.println(link.attr("href"));

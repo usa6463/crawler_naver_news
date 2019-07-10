@@ -55,6 +55,19 @@ public class Scheduler {
         }
     }
 
+    public void url_check_file_exist_check(String path){
+        File f = new File(path);
+        if(!f.exists()) { 
+            try{
+                CSVWriter writer = new CSVWriter(new FileWriter(path), ',');
+                writer.close();
+            }
+            catch(Exception e){
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
     // if wrong url, this method will return null
     // change url to more proper url.
     public static String parsing_url(String url, String now_url){
@@ -129,6 +142,7 @@ public class Scheduler {
 
     public void run() {
         file_exist_check("D:\\news.csv");
+        url_check_file_exist_check("D:\\url_check.csv");
 
         int loop_num = 1;
         while(true){
