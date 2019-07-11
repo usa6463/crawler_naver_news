@@ -156,7 +156,8 @@ public class Scheduler {
                 String next_href = q.poll();
                 System.out.println("give href to slave : " + next_href + " / rest num : " + Integer.toString(q.size()));
                 Slave s = new Slave(this, next_href);
-                s.run();
+                Thread t = new Thread(s);
+                t.start();
                 
             }
             loop_num++;
