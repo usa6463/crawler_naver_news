@@ -44,7 +44,7 @@ public class Scheduler {
             System.out.println("no file exist");
             try{
                 // write
-                CSVWriter writer = new CSVWriter(new FileWriter("D:\\news.csv", true), ',');
+                CSVWriter writer = new CSVWriter(new FileWriter(path, true), ',');
                 String[] write_contents = {"oid", "aid", "regist_datetime", "title", "content"};
                 writer.writeNext(write_contents);
                 writer.close();
@@ -154,9 +154,10 @@ public class Scheduler {
             }
             else{
                 String next_href = q.poll();
-                System.out.println("give href to slave : " + next_href);
+                System.out.println("give href to slave : " + next_href + " / rest num : " + Integer.toString(q.size()));
                 Slave s = new Slave(this, next_href);
                 s.run();
+                
             }
             loop_num++;
         }
