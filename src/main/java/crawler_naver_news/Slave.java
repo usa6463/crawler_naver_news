@@ -216,11 +216,15 @@ public class Slave implements Runnable  {
                 Elements datetimes = doc.select(syn);
                 String datetime = (datetimes.first().toString());
 
-                // write
-                CSVWriter writer = new CSVWriter(new FileWriter(this.file, true), ',');
-                String[] write_contents = {oid, aid, datetime, title, content};
-                writer.writeNext(write_contents);
-                writer.close();
+                JSONObject json_message = new JSONObject();
+                json_message.put("title", title);
+                json_message.put("content", content);
+                json_message.put("datetime", datetime);
+                json_message.put("oid", oid);
+                json_message.put("aid", aid);
+
+                String message = json_message.toJSONString();
+                send_kafka(message);
                 
             } catch(Exception e) {
                 System.out.println(e.getMessage());
