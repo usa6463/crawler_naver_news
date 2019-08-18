@@ -47,7 +47,7 @@ public class Slave implements Runnable  {
     String href;
     String file;
     final static String TOPIC_NAME = "naver_news";
-    final static String KAFKA_ADDR = "192.168.0.22:9092";
+    final static String KAFKA_ADDR = "192.168.0.23:9092";
 
     public Slave(Scheduler scheduler, String href){
         this.scheduler = scheduler;
