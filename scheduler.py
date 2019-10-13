@@ -37,5 +37,9 @@ if __name__ == '__main__':
 
             for proc in procs:
                 proc.join()
-            
+
+            time.sleep(1)
+
+        logger.info('time sleep 중')    
         time.sleep(ITERATION_INTERVAL)
+        logger.info('time sleep 끝')    
