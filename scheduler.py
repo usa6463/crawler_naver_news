@@ -1,6 +1,5 @@
 # coding:utf-8 
-import time
-import requests
+import time, logging, requests
 from bs4 import BeautifulSoup as bs
 from multiprocessing import Pool, Process, Queue
 from worker import worker_func
@@ -9,7 +8,18 @@ SEED = 'news.naver.com'
 PROCESS_NUM = 4
 ITERATION_INTERVAL = 60 * 10
 
+logger = logging.getLogger('naver-news-crawler')
+logger.setLevel(logging.INFO)
+stream_handler = logging.StreamHandler()
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+stream_handler.setFormatter(formatter)
+logger.addHandler(stream_handler)
+file_handler = logging.FileHandler('file.log')
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
 if __name__ == '__main__':
+    logger.info('crawler scheduler start')
     queue = Queue()
     queue.put(SEED)
 
@@ -22,7 +32,7 @@ if __name__ == '__main__':
                 url = None
                 if not queue.empty():
                     url = queue.get()
-                    proc = Process(target=worker_func, args=(url,queue))
+                    proc = Process(target=worker_func, args=(url,queue, logger))
                     procs.append(proc)
                     proc.start()
 

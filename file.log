@@ -1,0 +1,31 @@
+crawler scheduler start
+worker process : news.naver.com
+worker process : hello-news.naver.com
+worker process : hello-hello-news.naver.com
+worker process : hello-hello-hello-news.naver.com
+worker process : hello-hello-hello-hello-news.naver.com
+crawler scheduler start
+worker process : news.naver.com
+worker process : hello-news.naver.com
+worker process : hello-hello-news.naver.com
+worker process : hello-hello-hello-news.naver.com
+crawler scheduler start
+worker process : news.naver.com
+worker process : hello-news.naver.com
+worker process : hello-hello-news.naver.com
+worker process : hello-hello-hello-news.naver.com
+worker process : hello-hello-hello-hello-news.naver.com
+worker process : hello-hello-hello-hello-hello-news.naver.com
+worker process : hello-hello-hello-hello-hello-hello-news.naver.com
+worker process : hello-hello-hello-hello-hello-hello-hello-news.naver.com
+worker process : hello-hello-hello-hello-hello-hello-hello-hello-news.naver.com
+worker process : hello-hello-hello-hello-hello-hello-hello-hello-hello-news.naver.com
+worker process : hello-hello-hello-hello-hello-hello-hello-hello-hello-hello-news.naver.com
+worker process : hello-hello-hello-hello-hello-hello-hello-hello-hello-hello-hello-news.naver.com
+worker process : hello-hello-hello-hello-hello-hello-hello-hello-hello-hello-hello-hello-news.naver.com
+worker process : hello-hello-hello-hello-hello-hello-hello-hello-hello-hello-hello-hello-hello-news.naver.com
+2019-10-13 19:36:37,590 - naver-news-crawler - INFO - crawler scheduler start
+2019-10-13 19:36:38,090 - naver-news-crawler - INFO - worker process : news.naver.com
+2019-10-13 19:36:38,537 - naver-news-crawler - INFO - worker process : hello-news.naver.com
+2019-10-13 19:36:38,997 - naver-news-crawler - INFO - worker process : hello-hello-news.naver.com
+2019-10-13 19:36:39,462 - naver-news-crawler - INFO - worker process : hello-hello-hello-news.naver.com
