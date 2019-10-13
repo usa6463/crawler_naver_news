@@ -2,32 +2,31 @@
 import time
 import requests
 from bs4 import BeautifulSoup as bs
-from multiprocessing import Pool
-
+from multiprocessing import Pool, Process, Queue
 from worker import worker_func
 
 SEED = 'news.naver.com'
+PROCESS_NUM = 4
+ITERATION_INTERVAL = 60 * 10
 
 if __name__ == '__main__':
-    queue = []
-
-    queue.append(SEED)
-    pool = Pool(processes=4)
+    queue = Queue()
+    queue.put(SEED)
 
     while True:
         
-        while len(queue)>0:
-            urls = queue[0:4]
-            del queue[0:4]
+        while not queue.empty():
+            procs = []
 
-            pool.map(worker_func, [(x, queue) for x in urls])
-            time.sleep(1)
-            print(queue)
+            for val in range(PROCESS_NUM):
+                url = None
+                if not queue.empty():
+                    url = queue.get()
+                    proc = Process(target=worker_func, args=(url,queue))
+                    procs.append(proc)
+                    proc.start()
+
+            for proc in procs:
+                proc.join()
             
-        time.sleep(60*10)
-
-'''
-이슈
-- 큐가 레퍼런스로 전달되지 않는듯.
-- map이 프로세스들 작업 끝날때까지 기다려주지 않는듯. 
-'''
+        time.sleep(ITERATION_INTERVAL)
