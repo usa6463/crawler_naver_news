@@ -2,14 +2,17 @@
 import re, requests
 from bs4 import BeautifulSoup as bs
 
+URL_START = 'https://news.naver.com/'
+
 def worker_main(url, queue, logger):
     logger.info('worker process : ' + url)
-    queue.put('https://news.naver.com/main/ranking/read.nhn?mid=etc&sid1=111&rankingType=popular_day&oid=015&aid=0004222911&date=20191013&type=1&rankingSeq=1&rankingSectionId=105')
+    queue.put('/main/ranking/read.nhn?mid=etc&sid1=111&rankingType=popular_day&oid=015&aid=0004222911&date=20191013&type=1&rankingSeq=1&rankingSectionId=105')
 
     print('check_naver_news_page : ' + str(check_naver_news_page(url)))
-    print('check_article : ' + str(check_article(url)))
+    print('get_links : ' + str(get_links(url)))
 
-    # if check_naver_news_page(url):
+    # url = check_naver_news_page(url)
+    # if url:
     #     log_read(url)
 
     #     # 뉴스기사면
@@ -24,9 +27,14 @@ def worker_main(url, queue, logger):
     #                 queue.put(url)
             
 
-# url이 네이버 뉴스 도메인인지 체크. true, false 반환
+# url이 네이버 뉴스 도메인인지 체크. 틀리면 None, 맞으면 https 까지 붙은 full url 반환.
 def check_naver_news_page(url):
-    return str.startswith(url, 'https://news.naver.com/')
+    if str.startswith(url, URL_START):
+        return url 
+    elif str.startswith(url, '/'):
+        return URL_START + url[1:]
+    else :
+        return None
 
 # url이 뉴스기사인지 확인하여 true, false 반환
 def check_article(url):
@@ -39,8 +47,12 @@ def check_article(url):
 
 # url 페이지 안에 있는 모든 링크 파싱하여 반환
 def get_links(url):
-    
-    return []
+    req = requests.get(url)
+    html = req.text
+    soup = bs(html, 'html.parser')
+    links = soup.select('a[href]')
+    links = [link.get('href') for link in links]
+    return links
 
 # 뉴스기사 파싱
 def parse_news(url):
