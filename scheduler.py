@@ -31,7 +31,7 @@ if __name__ == '__main__':
                 url = None
                 if not queue.empty():
                     url = queue.get()
-                    proc = Process(target=worker_main, args=(url,queue, logger))
+                    proc = Process(target=worker_main, args=(url, queue, logger))
                     procs.append(proc)
                     proc.start()
 

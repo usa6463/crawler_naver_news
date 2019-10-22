@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup as bs
 from kafka.admin import KafkaAdminClient, NewTopic
 import kafka
 from kafka import KafkaProducer
+import pymysql
 
 URL_START = 'https://news.naver.com/'
 KAFKA_ADDR = "192.168.0.23:9092"
@@ -83,8 +84,12 @@ def parse_news(url):
     send_kafka(result)
     return
 
+
+
 # 이미 파싱했던 url인지 확인하여 true, false 반환
 def check_already_read(url):
+    conn = pymysql.connect(host = 'localhost', user = 'root', password = '1234')
+    cursor = conn.cursor()
     return False
 
 # 파싱한 url임을 기록
