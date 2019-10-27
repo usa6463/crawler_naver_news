@@ -1,7 +1,7 @@
 # coding:utf-8 
 import time, logging
 from multiprocessing import Pool, Process, Queue
-from worker import worker_main
+from worker import worker
 
 SEED = 'https://news.naver.com/'
 PROCESS_NUM = 4
@@ -25,21 +25,27 @@ if __name__ == '__main__':
     while True:
         
         while not queue.empty():
+            logger.info('queue 에 남은 링크 수 : ' + str(queue.qsize()))   
             procs = []
 
             for val in range(PROCESS_NUM):
                 url = None
                 if not queue.empty():
                     url = queue.get()
-                    proc = Process(target=worker_main, args=(url, queue, logger))
+                    worker_obj = worker()
+                    proc = Process(target=worker_obj.worker_main, args=(url, queue, logger))
                     procs.append(proc)
                     proc.start()
 
+            logger.info('프로세스들 join 시작')
             for proc in procs:
                 proc.join()
+            
+            logger.info('프로세스들 join 끝')
 
             time.sleep(1)
 
-        logger.info('time sleep 중')    
+        logger.info('ITERATION_INTERVAL 대기 중')    
+        logger.info('ITERATION_INTERVAL : ' + str(ITERATION_INTERVAL))    
         time.sleep(ITERATION_INTERVAL)
-        logger.info('time sleep 끝')    
+        logger.info('ITERATION_INTERVAL 종료')    
