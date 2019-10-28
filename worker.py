@@ -9,7 +9,7 @@ import pymysql
 class worker:
     URL_START = 'https://news.naver.com/'
     KAFKA_ADDR = "192.168.0.23:9092"
-    TOPIC_NAME = "naver_news"
+    TOPIC_NAME = "naver_news_python"
     logger = None
 
     def worker_main(self, url, queue, logger):
@@ -20,19 +20,19 @@ class worker:
         # self.logger.info('get_links : ' + str(get_links(url)))
 
         url = self.check_naver_news_page(url)
-        # if url:
-        #     self.log_read(url)
+        if url:
+            self.log_read(url)
 
-        #     # 뉴스기사면
-        #     if self.check_article(url):
-        #         self.parse_news(url)
+            # 뉴스기사면
+            if self.check_article(url):
+                self.parse_news(url)
 
-        #     # 그외 페이지라면
-        #     else:
-        #         links = self.get_links(url)
-        #         for link in links:
-        #             if not self.check_already_read(link):
-        #                 queue.put(link)
+            # 그외 페이지라면
+            else:
+                links = self.get_links(url)
+                for link in links:
+                    if not self.check_already_read(link):
+                        queue.put(link)
                         # self.logger.info(link)
                 
 
@@ -85,13 +85,13 @@ class worker:
         result['reg_dt'] = reg_dt
         result['content'] = content
 
-        self.send_kafka(result)
+        # self.send_kafka(result)
         return
 
     # 이미 파싱했던 url인지 확인하여 true, false 반환
     def check_already_read(self, url):
-        conn = pymysql.connect(host = 'localhost', user = 'root', password = '1234')
-        cursor = conn.cursor()
+        # conn = pymysql.connect(host = 'localhost', user = 'root', password = '1234')
+        # cursor = conn.cursor()
         return False
 
     # 파싱한 url임을 기록
@@ -105,11 +105,14 @@ class worker:
         kafka_client = kafka.KafkaClient(self.KAFKA_ADDR)
         server_topics = kafka_client.topic_partitions
 
-        if not self.TOPIC_NAME in server_topics:
-            self.logger.info('no topic')
-            admin_client = KafkaAdminClient(bootstrap_servers=self.KAFKA_ADDR)
-            admin_client.create_topics(self.TOPIC_NAME)
-            self.logger.info('topic create')
+        try:
+            if not self.TOPIC_NAME in server_topics:
+                self.logger.info('no topic')
+                admin_client = KafkaAdminClient(bootstrap_servers=self.KAFKA_ADDR)
+                admin_client.create_topics(self.TOPIC_NAME)
+                self.logger.info('topic create')
+        except Exception as e:
+            self.logger.info('topic create error : '+str(e))
 
         producer = KafkaProducer(bootstrap_servers=self.KAFKA_ADDR)
         producer.send(self.TOPIC_NAME, message)
