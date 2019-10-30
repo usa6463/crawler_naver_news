@@ -3,10 +3,19 @@ import time, logging
 from multiprocessing import Pool, Process, Queue
 from worker import worker
 
-SEED = 'https://news.naver.com/'
-PROCESS_NUM = 5
-ITERATION_INTERVAL = 60*10
+# config
+config = {}
+config['seed'] = 'https://news.naver.com/'
+config['process_num'] = 2
+config['iteration_interval'] = 60*10
+config['url_start'] = 'https://news.naver.com/'
+config['kafka_addr'] = "192.168.0.23:9092"
+config['topic_name'] = "naver_news_python"
+config['db_addr'] = "local"
+config['db_user'] = "root"
+config['db_pw'] = "1234"
 
+# logger setting
 logger = logging.getLogger('naver-news-crawler')
 logger.setLevel(logging.INFO)
 stream_handler = logging.StreamHandler()
@@ -19,7 +28,7 @@ logger.addHandler(file_handler)
 
 if __name__ == '__main__':
     logger.info('crawler scheduler start')
-    main_queue = [SEED]
+    main_queue = [config['seed']]
     
     while True: 
 
@@ -28,16 +37,14 @@ if __name__ == '__main__':
             logger.info('queue 에 남은 링크 수 : ' + str(len(main_queue)))   
             procs = []
 
-            for val in range(PROCESS_NUM):
+            for val in range(config['process_num']):
                 url = None
                 if len(main_queue)>0:
                     url = main_queue.pop(0)
                     worker_obj = worker()
-                    proc = Process(target=worker_obj.worker_main, args=(url, queue, logger))
+                    proc = Process(target=worker_obj.worker_main, args=(url, queue, logger, config))
                     procs.append(proc)
                     proc.start()
-
-            # logger.info('프로세스들 join 시작')
 
             while 1:
                 running = any(p.is_alive() for p in procs)
@@ -52,6 +59,6 @@ if __name__ == '__main__':
             time.sleep(1)
 
         logger.info('ITERATION_INTERVAL 대기 중')    
-        logger.info('ITERATION_INTERVAL : ' + str(ITERATION_INTERVAL))    
-        time.sleep(ITERATION_INTERVAL)
+        logger.info('ITERATION_INTERVAL : ' + str(config['iteration_interval']))    
+        time.sleep(config['iteration_interval'])
         logger.info('ITERATION_INTERVAL 종료')    

@@ -7,17 +7,13 @@ from kafka import KafkaProducer
 import pymysql
 
 class worker:
-    URL_START = 'https://news.naver.com/'
-    KAFKA_ADDR = "192.168.0.23:9092"
-    TOPIC_NAME = "naver_news_python"
     logger = None
+    config = None
 
-    def worker_main(self, url, queue, logger):
+    def worker_main(self, url, queue, logger, config):
         self.logger = logger
         self.logger.info('worker process : ' + url)
-
-        # self.logger.info('check_naver_news_page : ' + str(check_naver_news_page(url)))
-        # self.logger.info('get_links : ' + str(get_links(url)))
+        self.config = config
 
         url = self.check_naver_news_page(url)
         if url:
@@ -38,10 +34,10 @@ class worker:
 
     # url이 네이버 뉴스 도메인인지 체크. 틀리면 None, 맞으면 https 까지 붙은 full url 반환.
     def check_naver_news_page(self, url):
-        if str.startswith(url, self.URL_START):
+        if str.startswith(url, self.config['url_start']):
             return url 
         elif str.startswith(url, '/'):
-            return self.URL_START + url[1:]
+            return self.config['url_start'] + url[1:]
         else :
             return None
 
@@ -85,7 +81,7 @@ class worker:
         result['reg_dt'] = reg_dt
         result['content'] = content
 
-        # self.send_kafka(result)
+        self.send_kafka(result)
         return
 
     # 이미 파싱했던 url인지 확인하여 true, false 반환
@@ -102,20 +98,22 @@ class worker:
     def send_kafka(self, message):
         message = json.dumps(message)
 
-        kafka_client = kafka.KafkaClient(self.KAFKA_ADDR)
+        kafka_client = kafka.KafkaClient(self.config['kafka_addr'])
         server_topics = kafka_client.topic_partitions
 
         try:
-            if not self.TOPIC_NAME in server_topics:
+            if not self.config['topic_name'] in server_topics:
                 self.logger.info('no topic')
-                admin_client = KafkaAdminClient(bootstrap_servers=self.KAFKA_ADDR)
-                admin_client.create_topics(self.TOPIC_NAME)
+                admin_client = KafkaAdminClient(bootstrap_servers=self.config['kafka_addr'])
+                admin_client.create_topics(self.config['topic_name'])
                 self.logger.info('topic create')
+            else:
+                self.logger.info('already topic exist')
         except Exception as e:
             self.logger.info('topic create error : '+str(e))
 
-        producer = KafkaProducer(bootstrap_servers=self.KAFKA_ADDR)
-        producer.send(self.TOPIC_NAME, message)
+        producer = KafkaProducer(bootstrap_servers=self.config['kafka_addr'])
+        producer.send(self.config['topic_name'], message)
         self.logger.info('message send')
 
         return 
