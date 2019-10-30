@@ -95,7 +95,7 @@ class worker:
             where url = '{url_name}'
         '''
         result = cursor.execute(sql.format(table_name=self.config['db_table_name']+'_'+datetime.date.today().strftime('%Y%m%d'), url_name=url))
-        cursor.close()
+        conn.close()
 
         if result>=1:
             return True
@@ -111,8 +111,9 @@ class worker:
             (url) values
             ('{url_name}')
         '''
-        result = cursor.execute(sql.format(table_name=self.config['db_table_name']+'_'+datetime.date.today().strftime('%Y%m%d'), url_name=url))
-        cursor.close()
+        cursor.execute(sql.format(table_name=self.config['db_table_name']+'_'+datetime.date.today().strftime('%Y%m%d'), url_name=url))
+        conn.commit()
+        conn.close()
 
         return 
 
