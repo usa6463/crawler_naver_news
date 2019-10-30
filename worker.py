@@ -1,5 +1,5 @@
 # coding:utf-8 
-import re, requests, json
+import re, requests, json, datetime
 from bs4 import BeautifulSoup as bs
 from kafka.admin import KafkaAdminClient, NewTopic
 import kafka
@@ -81,13 +81,23 @@ class worker:
         result['reg_dt'] = reg_dt
         result['content'] = content
 
-        self.send_kafka(result)
+        # self.send_kafka(result)
         return
 
     # 이미 파싱했던 url인지 확인하여 true, false 반환
     def check_already_read(self, url):
-        # conn = pymysql.connect(host = 'localhost', user = 'root', password = '1234')
-        # cursor = conn.cursor()
+        conn = pymysql.connect(host = self.config['db_addr'], user = self.config['db_user'], password = self.config['db_pw'])
+        cursor = conn.cursor()
+        cursor.execute('use {}'.format(self.config['db_database_name']))
+        sql = '''
+            select *
+            from {table_name}
+            where url = '{url_name}'
+        '''
+        result = cursor.execute(sql.format(table_name=self.config['db_table_name']+'_'+datetime.date.today().strftime('%Y%m%d'), url_name=url))
+
+        if result>=1:
+            return True
         return False
 
     # 파싱한 url임을 기록
