@@ -95,6 +95,7 @@ class worker:
             where url = '{url_name}'
         '''
         result = cursor.execute(sql.format(table_name=self.config['db_table_name']+'_'+datetime.date.today().strftime('%Y%m%d'), url_name=url))
+        cursor.close()
 
         if result>=1:
             return True
@@ -102,6 +103,17 @@ class worker:
 
     # 파싱한 url임을 기록
     def log_read(self, url):
+        conn = pymysql.connect(host = self.config['db_addr'], user = self.config['db_user'], password = self.config['db_pw'])
+        cursor = conn.cursor()
+        cursor.execute('use {}'.format(self.config['db_database_name']))
+        sql = '''
+            insert into {table_name}
+            (url) values
+            ('{url_name}')
+        '''
+        result = cursor.execute(sql.format(table_name=self.config['db_table_name']+'_'+datetime.date.today().strftime('%Y%m%d'), url_name=url))
+        cursor.close()
+
         return 
 
     # kafka에 message 전송

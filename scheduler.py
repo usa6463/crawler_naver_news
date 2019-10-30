@@ -61,6 +61,7 @@ def set_db():
             );
         '''
         cursor.execute(sql.format(table_name=config['db_table_name']+'_'+td))
+    cursor.close()
         
 if __name__ == '__main__':
     logger.info('crawler scheduler start')
