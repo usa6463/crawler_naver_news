@@ -135,7 +135,7 @@ class worker:
         except Exception as e:
             self.logger.info('topic create error : '+str(e))
 
-        producer = KafkaProducer(bootstrap_servers=self.config['kafka_addr'])
+        producer = KafkaProducer(bootstrap_servers=self.config['kafka_addr'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
         producer.send(self.config['topic_name'], message)
         self.logger.info('message send')
 
