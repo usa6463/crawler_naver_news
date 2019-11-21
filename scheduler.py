@@ -15,7 +15,9 @@ config['db_addr'] = "localhost"
 config['db_user'] = "root"
 config['db_pw'] = "1234"
 config['db_database_name'] = "crawler_meta"
-config['db_table_name'] = "check"
+config['db_news_table_name'] = "news"
+config['db_path_table_name'] = "path"
+config['db_global_path_table_name'] = "global_path"
 
 # logger setting
 logger = logging.getLogger('naver-news-crawler')
@@ -29,8 +31,8 @@ file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
 def set_db():
-    # get today 
-    td = datetime.date.today().strftime('%Y%m%d')
+    # # get today 
+    # td = datetime.date.today().strftime('%Y%m%d')
 
     # db connect
     conn = pymysql.connect(host = config['db_addr'], user = config['db_user'], password = config['db_pw'])
@@ -48,28 +50,77 @@ def set_db():
     
     cursor.execute("use {database_name}".format(database_name=config['db_database_name']))
 
-    # table set
+    # global path table set
     sql = '''
     show tables like '{table_name}'
     '''
-    if cursor.execute(sql.format(table_name=config['db_table_name']+'_'+td)) == 0:
+    if cursor.execute(sql.format(table_name=config['db_global_path_table_name'])) == 0:
         sql = '''
             create table {table_name} (
                 regdatetime datetime NOT NULL default CURRENT_TIMESTAMP,
                 url varchar(255) NOT NULL,
-                PRIMARY KEY (url)
+                PRIMARY KEY (url),
+                INDEX(url)
             );
         '''
-        cursor.execute(sql.format(table_name=config['db_table_name']+'_'+td))
+        cursor.execute(sql.format(table_name=config['db_global_path_table_name']))
+
+    # news table set
+    sql = '''
+    show tables like '{table_name}'
+    '''
+    if cursor.execute(sql.format(table_name=config['db_news_table_name'])) == 0:
+        sql = '''
+            create table {table_name} (
+                regdatetime datetime NOT NULL default CURRENT_TIMESTAMP,
+                url varchar(255) NOT NULL,
+                PRIMARY KEY (url),
+                INDEX(url)
+            );
+        '''
+        cursor.execute(sql.format(table_name=config['db_news_table_name']))
+
+    conn.close()
+
+def path_table_set():
+    # db connect
+    conn = pymysql.connect(host = config['db_addr'], user = config['db_user'], password = config['db_pw'])
+    cursor = conn.cursor()
+
+    cursor.execute("use {database_name}".format(database_name=config['db_database_name']))
+
+    # news table set
+    sql = '''
+    show tables like '{table_name}'
+    '''
+    if cursor.execute(sql.format(table_name=config['db_path_table_name'])) == 0:
+        sql = '''
+            create table {table_name} (
+                regdatetime datetime NOT NULL default CURRENT_TIMESTAMP,
+                url varchar(255) NOT NULL,
+                PRIMARY KEY (url),
+                INDEX(url)
+            );
+        '''
+        cursor.execute(sql.format(table_name=config['db_path_table_name']))
+    
+    else :
+        sql = '''
+            delete from {table_name};
+        '''
+        cursor.execute(sql.format(table_name=config['db_path_table_name']))
+
     conn.close()
         
 if __name__ == '__main__':
+    session_num = 0
     logger.info('crawler scheduler start')
-    main_queue = [config['seed']]
-
     set_db()
     
     while True: 
+        logger.info('crawler scheduler start : '+str(session_num))
+        path_table_set()
+        main_queue = [config['seed']]
 
         while len(main_queue)>0:
             queue = Queue()   
@@ -101,3 +152,4 @@ if __name__ == '__main__':
         logger.info('ITERATION_INTERVAL : ' + str(config['iteration_interval']))    
         time.sleep(config['iteration_interval'])
         logger.info('ITERATION_INTERVAL 종료')    
+        session_num += 1

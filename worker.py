@@ -19,38 +19,62 @@ class worker:
 
         url = self.check_naver_news_page(url)
         if url:
-            if not self.check_already_read(url, conn):
-                self.log_read(url, conn)
-            elif url==config['seed']:
-                pass
-            else:
-                return
-
             # 뉴스기사면
             if self.check_article(url):
-                self.parse_news(url)
+                self.parse_news(url, conn)
 
             # 그외 페이지라면
             else:
-                links = self.get_links(url)
-                for link in links:
-                    if not self.check_already_read(link, conn):
-                        queue.put(link)
-                        # self.logger.info(link)
-                    
-        conn.close()
+                self.parse_path(url, conn, queue)
                 
+        conn.close()
+
+    def parse_path(self, url, conn, queue):
+        cursor = conn.cursor()
+
+        if not self.check_path_already_read(url, conn):
+            self.log_path_read(url, conn)
+
+            # global path table에 저장
+            sql = '''
+            select * 
+            from '{table_name}'
+            where url='{url}'
+            '''
+            if cursor.execute(sql.format(table_name=self.config['db_global_path_table_name'], url=url)) == 0:
+                sql = '''
+                    insert into {table_name}
+                    (url) values
+                    ('{url_name}')
+                '''
+                cursor.execute(sql.format(table_name=self.config['db_global_path_table_name'], url=url))
+
+            links = self.get_links(url)
+            for link in links:
+                if link is None:
+                    pass
+                elif self.check_article(url):
+                    if not self.check_news_already_read(link, conn):
+                        queue.put(link)    
+                else :
+                    if not self.check_path_already_read(link, conn):
+                        queue.put(link)    
 
     # url이 네이버 뉴스 도메인인지 체크. 틀리면 None, 맞으면 https 까지 붙은 full url 반환.
     # 추가로 파싱하고 싶지 않은 URL 필터링
     def check_naver_news_page(self, url):
         flag = 0
 
-        # 상대경로만 있는 경우
+        # 상대경로만 있는 경우 뉴스 도메인 추가
         if str.startswith(url, '/'):
             url = self.config['url_start'] + url[1:]
-        # 뉴스 도메인이 아닌 경우
+        # 뉴스 도메인으로 시작하는 url이 아닌 경우 제외
         if not str.startswith(url, self.config['url_start']):
+            flag = 1
+
+        # jsessionid 들어가는 경우 제외
+        p = re.compile('jsessionid')
+        if p.search(url):
             flag = 1
 
         # 시간이 들어가는 페이지인 경우
@@ -82,32 +106,36 @@ class worker:
         return links
 
     # 뉴스기사 파싱
-    def parse_news(self, url):
-        req = requests.get(url)
-        html = req.text
-        soup = bs(html, 'html.parser')
+    def parse_news(self, url, conn):
 
-        title = soup.select('#articleTitle')[0].text
-        content = soup.select('#articleBodyContents')[0].text
-        reg_dt = soup.select('span.t11')[0].text
+        if not self.check_news_already_read(url, conn):
+            self.log_news_read(url,conn)
 
-        p = re.compile('&oid=(\\d{1,100})&aid=(\\d{1,100})')
-        search_result = p.search(url)
-        oid = search_result.group(1)
-        aid = search_result.group(2)
+            req = requests.get(url)
+            html = req.text
+            soup = bs(html, 'html.parser')
 
-        result = {}
-        result['oid'] = oid
-        result['aid'] = aid
-        result['title'] = title
-        result['reg_dt'] = reg_dt
-        result['content'] = content
+            title = soup.select('#articleTitle')[0].text
+            content = soup.select('#articleBodyContents')[0].text
+            reg_dt = soup.select('span.t11')[0].text
 
-        self.send_kafka(result)
+            p = re.compile('&oid=(\\d{1,100})&aid=(\\d{1,100})')
+            search_result = p.search(url)
+            oid = search_result.group(1)
+            aid = search_result.group(2)
+
+            result = {}
+            result['oid'] = oid
+            result['aid'] = aid
+            result['title'] = title
+            result['reg_dt'] = reg_dt
+            result['content'] = content
+
+            self.send_kafka(result)
         return
 
-    # 이미 파싱했던 url인지 확인하여 true, false 반환
-    def check_already_read(self, url, conn):
+    # 이미 파싱했던 뉴스 url인지 확인하여 true, false 반환
+    def check_news_already_read(self, url, conn):
         cursor = conn.cursor()
         cursor.execute('use {}'.format(self.config['db_database_name']))
         sql = '''
@@ -115,14 +143,30 @@ class worker:
             from {table_name}
             where url = '{url_name}'
         '''
-        result = cursor.execute(sql.format(table_name=self.config['db_table_name']+'_'+datetime.date.today().strftime('%Y%m%d'), url_name=url))
+        result = cursor.execute(sql.format(table_name=self.config['db_news_table_name'], url_name=url))
 
         if result>=1:
             return True
         return False
 
-    # 파싱한 url임을 기록
-    def log_read(self, url, conn):
+    # 이미 파싱했던 path url인지 확인하여 true, false 반환
+    def check_path_already_read(self, url, conn):
+        cursor = conn.cursor()
+        cursor.execute('use {}'.format(self.config['db_database_name']))
+        sql = '''
+            select *
+            from {table_name}
+            where url = '{url_name}'
+        '''
+        result = cursor.execute(sql.format(table_name=self.config['db_path_table_name'], url_name=url))
+
+        if result>=1:
+            return True
+        return False
+
+
+    # 파싱한 뉴스 url임을 기록
+    def log_news_read(self, url, conn):
         cursor = conn.cursor()
         cursor.execute('use {}'.format(self.config['db_database_name']))
         sql = '''
@@ -130,7 +174,21 @@ class worker:
             (url) values
             ('{url_name}')
         '''
-        cursor.execute(sql.format(table_name=self.config['db_table_name']+'_'+datetime.date.today().strftime('%Y%m%d'), url_name=url))
+        cursor.execute(sql.format(table_name=self.config['db_news_table_name'], url_name=url))
+        conn.commit()
+
+        return 
+
+    # 파싱한 path url임을 기록
+    def log_path_read(self, url, conn):
+        cursor = conn.cursor()
+        cursor.execute('use {}'.format(self.config['db_database_name']))
+        sql = '''
+            insert into {table_name}
+            (url) values
+            ('{url_name}')
+        '''
+        cursor.execute(sql.format(table_name=self.config['db_path_table_name'], url_name=url))
         conn.commit()
 
         return 
@@ -157,3 +215,19 @@ class worker:
         # self.logger.info('message send')
 
         return 
+
+    def make_table(self, conn, config, date):
+        cursor = conn.cursor()
+        # table set
+        sql = '''
+        show tables like '{table_name}'
+        '''
+        if cursor.execute(sql.format(table_name=config['db_table_name']+'_'+date)) == 0:
+            sql = '''
+                create table {table_name} (
+                    regdatetime datetime NOT NULL default CURRENT_TIMESTAMP,
+                    url varchar(255) NOT NULL,
+                    PRIMARY KEY (url)
+                );
+            '''
+            cursor.execute(sql.format(table_name=config['db_table_name']+'_'+date))
