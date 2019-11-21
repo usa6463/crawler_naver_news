@@ -6,7 +6,7 @@ from worker import worker
 # config
 config = {}
 config['seed'] = 'https://news.naver.com/'
-config['process_num'] = 2
+config['process_num'] = 10
 config['iteration_interval'] = 60*10
 config['url_start'] = 'https://news.naver.com/'
 config['kafka_addr'] = "192.168.0.23:9092"
