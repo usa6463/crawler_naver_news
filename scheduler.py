@@ -109,6 +109,7 @@ def path_table_set():
             delete from {table_name};
         '''
         cursor.execute(sql.format(table_name=config['db_path_table_name']))
+        conn.commit()
 
     conn.close()
         

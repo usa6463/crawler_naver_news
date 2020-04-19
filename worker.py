@@ -38,16 +38,16 @@ class worker:
             # global path table에 저장
             sql = '''
             select * 
-            from '{table_name}'
-            where url='{url}'
+            from {table_name}
+            where url='{url_name}'
             '''
-            if cursor.execute(sql.format(table_name=self.config['db_global_path_table_name'], url=url)) == 0:
+            if cursor.execute(sql.format(table_name=self.config['db_global_path_table_name'], url_name=url)) == 0:
                 sql = '''
                     insert into {table_name}
                     (url) values
                     ('{url_name}')
                 '''
-                cursor.execute(sql.format(table_name=self.config['db_global_path_table_name'], url=url))
+                cursor.execute(sql.format(table_name=self.config['db_global_path_table_name'], url_name=url))
 
             links = self.get_links(url)
             for link in links:
@@ -78,6 +78,9 @@ class worker:
             flag = 1
 
         # 시간이 들어가는 페이지인 경우
+        p = re.compile('&time=')
+        if p.search(url):
+            flag = 1
 
         # 연예, 스포츠 등 페이지인 경우
 
