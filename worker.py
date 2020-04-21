@@ -134,7 +134,7 @@ class worker:
             result['reg_dt'] = reg_dt
             result['content'] = content
 
-            self.send_kafka(result)
+            # self.send_kafka(result)
         return
 
     # 이미 파싱했던 뉴스 url인지 확인하여 true, false 반환

@@ -1,0 +1,49 @@
+sudo service mysql start
+sudo mysql -u root -p
+비번없이 그냥 엔터
+---------------------------------------------------------------------------------------------------
+
+access denined 문제 해결 : https://jcon.tistory.com/130
+SET PASSWORD FOR 'root'@'localhost' = PASSWORD('1234');
+
+---------------------------------------------------------------------------------------------------
+
+index out of range 문제가 있음
+
+Process Process-304:
+Traceback (most recent call last):
+  File "/usr/lib/python3.6/multiprocessing/process.py", line 258, in _bootstrap
+    self.run()
+Process Process-309:
+  File "/usr/lib/python3.6/multiprocessing/process.py", line 93, in run
+    self._target(*self._args, **self._kwargs)
+  File "/mnt/c/Users/Insu/Documents/project/crawler_naver_news/worker.py", line 24, in worker_main
+    self.parse_news(url, conn)
+Traceback (most recent call last):
+  File "/mnt/c/Users/Insu/Documents/project/crawler_naver_news/worker.py", line 121, in parse_news
+    title = soup.select('#articleTitle')[0].text
+  File "/usr/lib/python3.6/multiprocessing/process.py", line 258, in _bootstrap
+    self.run()
+IndexError: list index out of range
+  File "/usr/lib/python3.6/multiprocessing/process.py", line 93, in run
+    self._target(*self._args, **self._kwargs)
+  File "/mnt/c/Users/Insu/Documents/project/crawler_naver_news/worker.py", line 24, in worker_main
+    self.parse_news(url, conn)
+  File "/mnt/c/Users/Insu/Documents/project/crawler_naver_news/worker.py", line 121, in parse_news
+    title = soup.select('#articleTitle')[0].text
+IndexError: list index out of range
+
+-> 파싱하는 URL 중 기사가 아닌 페이지도 보는 경우가 있는듯. 해결 필요.
+
+
+-------------------------------------------------------
+
+
+숫자 네비게이션 링크 읽어오지 못하고 있었음.
+
+https://news.naver.com/main/main.nhn?mode=LSD&mid=shm&sid1=100#&date=%2000:00:00&page=8
+<a href="#&amp;date= 00:00:00&amp;page=11" class="_paging next nclicks(air.next)">다음</a>
+
+일자별 네비게이션 
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=258&sid1=101&date=20200420
+<a href="?mode=LS2D&amp;mid=shm&amp;sid2=258&amp;sid1=101&amp;date=20200420" class="nclicks(fls.date)">4월20일(월)</a>
