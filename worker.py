@@ -65,9 +65,21 @@ class worker:
     def check_naver_news_page(self, url):
         flag = 0
 
-        # 상대경로만 있는 경우 뉴스 도메인 추가
-        if str.startswith(url, '/'):
-            url = self.config['url_start'] + url[1:]
+        # 절대경로가 아닌 경우
+        if not str.startswith(url, 'http'):
+
+            # /로 시작하는 경우
+            if str.startswith(url, '/'):
+                url = self.config['url_start'] + url[1:]
+
+            else if str.startswith(url, '?'):
+             # 대충 amp; 지우고 현재 url ? 부분 부터(없으면 마지막에 붙이기) 대체해주는 코드
+
+            else if str.startswith(url, '#'):
+            # 대충 amp; 지우고 현재 url # 부분 부터(없으면 마지막에 붙이기) 대체해주는 코드
+
+        
+
         # 뉴스 도메인으로 시작하는 url이 아닌 경우 제외
         if not str.startswith(url, self.config['url_start']):
             flag = 1

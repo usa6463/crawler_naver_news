@@ -40,10 +40,19 @@ IndexError: list index out of range
 
 
 숫자 네비게이션 링크 읽어오지 못하고 있었음.
-
 https://news.naver.com/main/main.nhn?mode=LSD&mid=shm&sid1=100#&date=%2000:00:00&page=8
 <a href="#&amp;date= 00:00:00&amp;page=11" class="_paging next nclicks(air.next)">다음</a>
 
 일자별 네비게이션 
 https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=258&sid1=101&date=20200420
 <a href="?mode=LS2D&amp;mid=shm&amp;sid2=258&amp;sid1=101&amp;date=20200420" class="nclicks(fls.date)">4월20일(월)</a>
+
+이런경우도 1
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=sec&sid2=262&sid1=101&date=20200422&page=2
+<a href="?mode=LS2D&amp;mid=sec&amp;sid2=262&amp;sid1=101&amp;date=20200422&amp;page=2" class="nclicks(fls.page)">2</a>
+
+
+
+?mode=LS2D&amp;mid=shm&amp;sid2=258&amp;sid1=101&amp;date=20200421
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=258&sid1=101&date=20200421
+- amp; 는 지워줘야한다
