@@ -51,8 +51,17 @@ https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=258&sid1=101&date=20
 https://news.naver.com/main/list.nhn?mode=LS2D&mid=sec&sid2=262&sid1=101&date=20200422&page=2
 <a href="?mode=LS2D&amp;mid=sec&amp;sid2=262&amp;sid1=101&amp;date=20200422&amp;page=2" class="nclicks(fls.page)">2</a>
 
-
-
 ?mode=LS2D&amp;mid=shm&amp;sid2=258&amp;sid1=101&amp;date=20200421
 https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=258&sid1=101&date=20200421
 - amp; 는 지워줘야한다
+
+
+------------
+
+path 중에서 특정 페이지보면 똑같은 기사에 그림만 조금씩 다른채로 여러개 올라와 있는 경우들이 있다.
+
+https://news.naver.com/main/list.nhn?mode=LS2D&sid2=258&sid1=101&mid=shm&date=20200423&page=11
+
+https://entertain.naver.com/read?oid=214&aid=0001033298 = https://news.naver.com/main/read.nhn?mode=LPOD&mid=tvh&oid=214&aid=0001033298
+오른쪽 링크 따라가도 왼쪽 링크 뜸. 
+연예쪽 뉴스임.

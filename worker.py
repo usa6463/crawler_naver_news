@@ -12,7 +12,7 @@ class worker:
 
     def worker_main(self, url, queue, logger, config):
         self.logger = logger
-        self.logger.info('worker process : ' + url)
+        # self.logger.info('worker process : ' + url)
         self.config = config
 
         conn = pymysql.connect(host = self.config['db_addr'], user = self.config['db_user'], password = self.config['db_pw'])
@@ -62,7 +62,7 @@ class worker:
 
     # url이 네이버 뉴스 도메인인지 체크. 틀리면 None, 맞으면 https 까지 붙은 full url 반환.
     # 추가로 파싱하고 싶지 않은 URL 필터링
-    def check_naver_news_page(self, url):
+    def check_naver_news_page(self, url, cur_url=None):
         flag = 0
 
         # 절대경로가 아닌 경우
@@ -72,13 +72,21 @@ class worker:
             if str.startswith(url, '/'):
                 url = self.config['url_start'] + url[1:]
 
-            else if str.startswith(url, '?'):
-             # 대충 amp; 지우고 현재 url ? 부분 부터(없으면 마지막에 붙이기) 대체해주는 코드
+            elif str.startswith(url, '?'):
+                url = re.sub('amp;', '', url)
+                key_idx = cur_url.find('?')
+                if key_idx > -1:
+                    url = cur_url[:key_idx] + url
+                else :
+                    flag=1
 
-            else if str.startswith(url, '#'):
-            # 대충 amp; 지우고 현재 url # 부분 부터(없으면 마지막에 붙이기) 대체해주는 코드
-
-        
+            elif str.startswith(url, '#'):
+                url = re.sub('amp;', '', url)
+                key_idx = cur_url.find('#')
+                if key_idx > -1:
+                    url = cur_url[:key_idx] + url
+                else :
+                    flag=1            
 
         # 뉴스 도메인으로 시작하는 url이 아닌 경우 제외
         if not str.startswith(url, self.config['url_start']):
@@ -117,36 +125,42 @@ class worker:
         html = req.text
         soup = bs(html, 'html.parser')
         links = soup.select('a[href]')
-        links = list(set([self.check_naver_news_page(link.get('href')) for link in links]))
+        links = list(set([self.check_naver_news_page(link.get('href'), url) for link in links]))
         return links
 
     # 뉴스기사 파싱
     def parse_news(self, url, conn):
 
         if not self.check_news_already_read(url, conn):
-            self.log_news_read(url,conn)
 
-            req = requests.get(url)
-            html = req.text
-            soup = bs(html, 'html.parser')
+            try:
+                self.log_news_read(url,conn)
 
-            title = soup.select('#articleTitle')[0].text
-            content = soup.select('#articleBodyContents')[0].text
-            reg_dt = soup.select('span.t11')[0].text
+                req = requests.get(url)
+                html = req.text
+                soup = bs(html, 'html.parser')
 
-            p = re.compile('&oid=(\\d{1,100})&aid=(\\d{1,100})')
-            search_result = p.search(url)
-            oid = search_result.group(1)
-            aid = search_result.group(2)
+                title = soup.select('#articleTitle')[0].text
+                content = soup.select('#articleBodyContents')[0].text
+                reg_dt = soup.select('span.t11')[0].text
 
-            result = {}
-            result['oid'] = oid
-            result['aid'] = aid
-            result['title'] = title
-            result['reg_dt'] = reg_dt
-            result['content'] = content
+                p = re.compile('&oid=(\\d{1,100})&aid=(\\d{1,100})')
+                search_result = p.search(url)
+                oid = search_result.group(1)
+                aid = search_result.group(2)
 
-            # self.send_kafka(result)
+                result = {}
+                result['oid'] = oid
+                result['aid'] = aid
+                result['title'] = title
+                result['reg_dt'] = reg_dt
+                result['content'] = content
+                # self.send_kafka(result)
+
+            except Exception as e:
+                self.logger.info(str(e) + ' : ' + url)
+
+
         return
 
     # 이미 파싱했던 뉴스 url인지 확인하여 true, false 반환
