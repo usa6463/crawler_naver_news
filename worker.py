@@ -18,8 +18,8 @@ class worker:
         conn = pymysql.connect(host = self.config['db_addr'], user = self.config['db_user'], password = self.config['db_pw'])
 
         redirect_url = self.check_naver_news_page(requests.get(url).url)
+        url = self.check_naver_news_page(url)
         print(url, redirect_url)
-        url = self.check_naver_news_page(redirect_url)
         if url and redirect_url:
             # 뉴스기사면
             if self.check_article(url):
