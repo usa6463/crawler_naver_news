@@ -151,8 +151,6 @@ class worker:
 
             except Exception as e:
                 self.logger.info(str(e) + ' : ' + url)
-
-
         return
 
     # 이미 파싱했던 뉴스 url인지 확인하여 true, false 반환
