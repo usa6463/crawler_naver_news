@@ -32,24 +32,14 @@ class worker:
         conn.close()
 
     def parse_path(self, url, conn, queue):
-        cursor = conn.cursor()
+
+        # navigation link가 아니면 링크 추가하지 않음. 
+        p = re.compile('date=[a-zA-Z;=&0-9]{1,100}page=')
+        if not p.search(url):
+            return 
 
         if not self.check_path_already_read(url, conn):
             self.log_path_read(url, conn)
-
-            # global path table에 저장
-            sql = '''
-            select * 
-            from {table_name}
-            where url='{url_name}'
-            '''
-            if cursor.execute(sql.format(table_name=self.config['db_global_path_table_name'], url_name=url)) == 0:
-                sql = '''
-                    insert into {table_name}
-                    (url) values
-                    ('{url_name}')
-                '''
-                cursor.execute(sql.format(table_name=self.config['db_global_path_table_name'], url_name=url))
 
             links = self.get_links(url)
             for link in links:

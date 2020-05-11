@@ -5,7 +5,7 @@ from worker import worker
 
 # config
 config = {}
-config['seed'] = 'https://news.naver.com/'
+config['seed'] = ['https://news.naver.com/']
 config['process_num'] = 10
 config['iteration_interval'] = 60*10
 config['url_start'] = 'https://news.naver.com/'
@@ -17,7 +17,6 @@ config['db_pw'] = "1234"
 config['db_database_name'] = "crawler_meta"
 config['db_news_table_name'] = "news"
 config['db_path_table_name'] = "path"
-config['db_global_path_table_name'] = "global_path"
 
 # logger setting
 logger = logging.getLogger('naver-news-crawler')
@@ -50,21 +49,6 @@ def set_db():
     
     cursor.execute("use {database_name}".format(database_name=config['db_database_name']))
 
-    # global path table set
-    sql = '''
-    show tables like '{table_name}'
-    '''
-    if cursor.execute(sql.format(table_name=config['db_global_path_table_name'])) == 0:
-        sql = '''
-            create table {table_name} (
-                regdatetime datetime NOT NULL default CURRENT_TIMESTAMP,
-                url varchar(255) NOT NULL,
-                PRIMARY KEY (url),
-                INDEX(url)
-            );
-        '''
-        cursor.execute(sql.format(table_name=config['db_global_path_table_name']))
-
     # news table set
     sql = '''
     show tables like '{table_name}'
@@ -81,76 +65,35 @@ def set_db():
         cursor.execute(sql.format(table_name=config['db_news_table_name']))
 
     conn.close()
-
-def path_table_set():
-    # db connect
-    conn = pymysql.connect(host = config['db_addr'], user = config['db_user'], password = config['db_pw'])
-    cursor = conn.cursor()
-
-    cursor.execute("use {database_name}".format(database_name=config['db_database_name']))
-
-    # news table set
-    sql = '''
-    show tables like '{table_name}'
-    '''
-    if cursor.execute(sql.format(table_name=config['db_path_table_name'])) == 0:
-        sql = '''
-            create table {table_name} (
-                regdatetime datetime NOT NULL default CURRENT_TIMESTAMP,
-                url varchar(255) NOT NULL,
-                PRIMARY KEY (url),
-                INDEX(url)
-            );
-        '''
-        cursor.execute(sql.format(table_name=config['db_path_table_name']))
-    
-    else :
-        sql = '''
-            delete from {table_name};
-        '''
-        cursor.execute(sql.format(table_name=config['db_path_table_name']))
-        conn.commit()
-
-    conn.close()
         
 if __name__ == '__main__':
-    session_num = 0
     logger.info('crawler scheduler start')
     set_db()
-    
-    while True: 
-        logger.info('crawler scheduler start : '+str(session_num))
-        path_table_set()
-        main_queue = [config['seed']]
+    main_queue = config['seed']
 
-        while len(main_queue)>0:
-            queue = Queue()   
-            logger.info('queue 에 남은 링크 수 : ' + str(len(main_queue)))   
-            procs = []
+    while len(main_queue)>0:
+        queue = Queue()   
+        logger.info('queue 에 남은 링크 수 : ' + str(len(main_queue)))   
+        procs = []
 
-            for val in range(config['process_num']):
-                url = None
-                if len(main_queue)>0:
-                    url = main_queue.pop(0)
-                    worker_obj = worker()
-                    proc = Process(target=worker_obj.worker_main, args=(url, queue, logger, config))
-                    procs.append(proc)
-                    proc.start()
+        for val in range(config['process_num']):
+            url = None
+            if len(main_queue)>0:
+                url = main_queue.pop(0)
+                worker_obj = worker()
+                proc = Process(target=worker_obj.worker_main, args=(url, queue, logger, config))
+                procs.append(proc)
+                proc.start()
 
-            while 1:
-                running = any(p.is_alive() for p in procs)
-                while not queue.empty():
-                    main_queue.append(queue.get())
-                if not running:
-                    break
+        while 1:
+            running = any(p.is_alive() for p in procs)
+            while not queue.empty():
+                main_queue.append(queue.get())
+            if not running:
+                break
 
-            main_queue = list(set(main_queue))
-            queue.close()
-            # logger.info('프로세스들 join 끝')
-            time.sleep(1)
-
-        logger.info('ITERATION_INTERVAL 대기 중')    
-        logger.info('ITERATION_INTERVAL : ' + str(config['iteration_interval']))    
-        time.sleep(config['iteration_interval'])
-        logger.info('ITERATION_INTERVAL 종료')    
-        session_num += 1
+        main_queue = list(set(main_queue))
+        queue.close()
+        # logger.info('프로세스들 join 끝')
+        time.sleep(1)
+        
