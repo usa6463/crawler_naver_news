@@ -1,5 +1,6 @@
 # coding:utf-8 
-import time, logging, pymysql, datetime
+import time, logging, pymysql
+from datetime import datetime, timedelta
 from multiprocessing import Pool, Process, Queue
 from worker import worker
 
@@ -30,9 +31,6 @@ file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
 def set_db():
-    # # get today 
-    # td = datetime.date.today().strftime('%Y%m%d')
-
     # db connect
     conn = pymysql.connect(host = config['db_addr'], user = config['db_user'], password = config['db_pw'])
     cursor = conn.cursor()
@@ -67,6 +65,7 @@ def set_db():
     conn.close()
         
 if __name__ == '__main__':
+    jobday = (datetime.today() - timedelta(days=1)).strftime('%Y%m%d')
     logger.info('crawler scheduler start')
     set_db()
     main_queue = config['seed']
@@ -81,7 +80,7 @@ if __name__ == '__main__':
             if len(main_queue)>0:
                 url = main_queue.pop(0)
                 worker_obj = worker()
-                proc = Process(target=worker_obj.worker_main, args=(url, queue, logger, config))
+                proc = Process(target=worker_obj.worker_main, args=(url, queue, logger, config, jobday))
                 procs.append(proc)
                 proc.start()
 
