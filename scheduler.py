@@ -66,9 +66,10 @@ def set_db():
         
 if __name__ == '__main__':
     jobday = (datetime.today() - timedelta(days=1)).strftime('%Y%m%d')
+
     logger.info('crawler scheduler start')
     set_db()
-    main_queue = config['seed']
+    main_queue = [x.format(jobday=jobday) for x in config['seed']]
 
     while len(main_queue)>0:
         queue = Queue()   
