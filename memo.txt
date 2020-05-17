@@ -94,6 +94,9 @@ https://entertain.naver.com/read?oid=214&aid=0001033298 = https://news.naver.com
     4. 특정 카테고리가 몇페이지까지 있는지 확인하는 방법? (
       - 1부터 점점 올려가는데 실제 조회 했을 때 링크의 페이지가 다른 경우 stop. 최대 6페이지까지 있는 상황에서 7페이지 조회하면 6페이지뜸 -> 이방법 안됨. 링크는 그대로 유지됨.
       - 해당 페이지에서 다음 링크가 있는지 확인한다. 
+      - 1~3 내용적용하면 필요 없는거 아닌가?
+
+    3까지 적용하면 테스트해볼것
 
 
 2페이지
@@ -101,3 +104,74 @@ https://entertain.naver.com/read?oid=214&aid=0001033298 = https://news.naver.com
 
 다음
 <a href="?mode=LS2D&amp;mid=shm&amp;sid2=265&amp;sid1=100&amp;date=20200511&amp;page=11" class="next nclicks(fls.page)">다음</a>
+
+
+정치
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=264&sid1=100&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=265&sid1=100&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=268&sid1=100&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=266&sid1=100&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=267&sid1=100&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=269&sid1=100&date=20200517
+
+경제
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=259&sid1=101&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=258&sid1=101&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=261&sid1=101&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=771&sid1=101&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=260&sid1=101&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=262&sid1=101&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=310&sid1=101&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=263&sid1=101&date=20200517
+
+사회
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=249&sid1=102&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=250&sid1=102&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=251&sid1=102&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=254&sid1=102&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=252&sid1=102&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=59b&sid1=102&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=255&sid1=102&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=256&sid1=102&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=276&sid1=102&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=257&sid1=102&date=20200517
+
+생활/문화
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=241&sid1=103&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=239&sid1=103&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=240&sid1=103&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=237&sid1=103&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=238&sid1=103&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=376&sid1=103&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=242&sid1=103&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=243&sid1=103&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=244&sid1=103&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=248&sid1=103&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=245&sid1=103&date=20200517
+
+세계
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=231&sid1=104&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=232&sid1=104&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=233&sid1=104&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=234&sid1=104&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=322&sid1=104&date=20200517
+
+IT/과학
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=731&sid1=105&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=226&sid1=105&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=227&sid1=105&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=230&sid1=105&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=732&sid1=105&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=283&sid1=105&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=229&sid1=105&date=20200517
+https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=228&sid1=105&date=20200517
+
+속보
+https://news.naver.com/main/list.nhn?mode=LSD&mid=sec&sid1=100&date=20200517
+https://news.naver.com/main/list.nhn?mode=LSD&mid=sec&sid1=101&date=20200517
+https://news.naver.com/main/list.nhn?mode=LSD&mid=sec&sid1=102&date=20200517
+https://news.naver.com/main/list.nhn?mode=LSD&mid=sec&sid1=103&date=20200517
+https://news.naver.com/main/list.nhn?mode=LSD&mid=sec&sid1=104&date=20200517
+https://news.naver.com/main/list.nhn?mode=LSD&mid=sec&sid1=105&date=20200517
+https://news.naver.com/main/list.nhn?mode=LSD&mid=sec&sid1=110&date=20200517
+https://news.naver.com/main/list.nhn?mode=LPOD&sid2=140&sid1=001&mid=sec&oid=001&isYeonhapFlash=Y&date=20200517
