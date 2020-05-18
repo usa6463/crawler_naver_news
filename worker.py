@@ -21,22 +21,24 @@ class worker:
 
         redirect_url = self.check_naver_news_page(requests.get(url).url)
         url = self.check_naver_news_page(url)
-        print(url, redirect_url)
+    
         if url and redirect_url:
             # 뉴스기사면
             if self.check_article(url):
                 self.parse_news(url, conn)
+                self.logger.info('news : '+url)
 
             # 그외 페이지라면
             else:
                 self.parse_path(url, conn, queue)
+                self.logger.info('path : '+url)
                 
         conn.close()
 
     def parse_path(self, url, conn, queue):
         if not self.check_path_already_read(url, conn):
             self.log_path_read(url, conn)
-
+            
             links = self.get_links(url)
             for link in links:
                 if link is None:
@@ -45,6 +47,7 @@ class worker:
                     if not self.check_news_already_read(link, conn):
                         queue.put(link)    
                 else :
+                    self.logger.info('link : ' + link)
                     if not self.check_path_already_read(link, conn) and re.compile('date={jobday}[a-zA-Z;=&0-9]{{0,100}}page='.format(jobday=self.jobday)).search(url):  # 안 읽은거 & jobday 일치하는 네비게이션페이지
                         queue.put(link)    
 
@@ -158,7 +161,7 @@ class worker:
             from {table_name}
             where url = '{url_name}'
         '''
-        result = cursor.execute(sql.format(table_name=self.config['db_news_table_name'], url_name=url))
+        result = cursor.execute(sql.format(table_name=self.config['db_news_table_name'].format(jobday=self.jobday), url_name=url))
 
         if result>=1:
             return True
@@ -173,7 +176,7 @@ class worker:
             from {table_name}
             where url = '{url_name}'
         '''
-        result = cursor.execute(sql.format(table_name=self.config['db_path_table_name'], url_name=url))
+        result = cursor.execute(sql.format(table_name=self.config['db_path_table_name'].format(jobday=self.jobday), url_name=url))
 
         if result>=1:
             return True
@@ -189,7 +192,7 @@ class worker:
             (url) values
             ('{url_name}')
         '''
-        cursor.execute(sql.format(table_name=self.config['db_news_table_name'], url_name=url))
+        cursor.execute(sql.format(table_name=self.config['db_news_table_name'].format(jobday=self.jobday), url_name=url))
         conn.commit()
 
         return 
@@ -203,7 +206,7 @@ class worker:
             (url) values
             ('{url_name}')
         '''
-        cursor.execute(sql.format(table_name=self.config['db_path_table_name'], url_name=url))
+        cursor.execute(sql.format(table_name=self.config['db_path_table_name'].format(jobday=self.jobday), url_name=url))
         conn.commit()
 
         return 

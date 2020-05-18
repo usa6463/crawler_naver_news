@@ -16,8 +16,8 @@ config['db_addr'] = "localhost"
 config['db_user'] = "root"
 config['db_pw'] = "1234"
 config['db_database_name'] = "crawler_meta"
-config['db_news_table_name'] = "news"
-config['db_path_table_name'] = "path"
+config['db_news_table_name'] = "news_{jobday}"
+config['db_path_table_name'] = "path_{jobday}"
 
 # logger setting
 logger = logging.getLogger('naver-news-crawler')
@@ -51,7 +51,7 @@ def set_db():
     sql = '''
     show tables like '{table_name}'
     '''
-    if cursor.execute(sql.format(table_name=config['db_news_table_name'])) == 0:
+    if cursor.execute(sql.format(table_name=config['db_news_table_name'].format(jobday=jobday))) == 0:
         sql = '''
             create table {table_name} (
                 regdatetime datetime NOT NULL default CURRENT_TIMESTAMP,
@@ -60,7 +60,22 @@ def set_db():
                 INDEX(url)
             );
         '''
-        cursor.execute(sql.format(table_name=config['db_news_table_name']))
+        cursor.execute(sql.format(table_name=config['db_news_table_name'].format(jobday=jobday)))
+
+    # path table set
+    sql = '''
+    show tables like '{table_name}'
+    '''
+    if cursor.execute(sql.format(table_name=config['db_path_table_name'].format(jobday=jobday))) == 0:
+        sql = '''
+            create table {table_name} (
+                regdatetime datetime NOT NULL default CURRENT_TIMESTAMP,
+                url varchar(255) NOT NULL,
+                PRIMARY KEY (url),
+                INDEX(url)
+            );
+        '''
+        cursor.execute(sql.format(table_name=config['db_path_table_name'].format(jobday=jobday)))
 
     conn.close()
         
