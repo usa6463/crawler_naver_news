@@ -250,10 +250,12 @@ def make_table( conn, config, date):
 
 
 
-result = get_links("https://news.naver.com/main/main.nhn?mode=LSD&mid=shm&sid1=100")
+# result = get_links("https://news.naver.com/main/main.nhn?mode=LSD&mid=shm&sid1=100")
 
-for url in result[:-2]:
-    p = re.compile('https')
-    if url is not None:
-        if p.search(url):
-            print(url)
+# for url in result[:-2]:
+#     p = re.compile('https')
+#     if url is not None:
+#         if p.search(url):
+#             print(url)
+
+print(check_article('https://news.naver.com/main/read.nhn?mode=LS2D&mid=shm&sid1=101&sid2=771&oid=0a01&aid=0011623035'))

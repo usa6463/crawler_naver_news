@@ -43,12 +43,11 @@ class worker:
             for link in links:
                 if link is None:
                     pass
-                elif self.check_article(url):
+                elif self.check_article(link):
                     if not self.check_news_already_read(link, conn):
                         queue.put(link)    
                 else :
-                    self.logger.info('link : ' + link)
-                    if not self.check_path_already_read(link, conn) and re.compile('date={jobday}[a-zA-Z;=&0-9]{{0,100}}page='.format(jobday=self.jobday)).search(url):  # 안 읽은거 & jobday 일치하는 네비게이션페이지
+                    if not self.check_path_already_read(link, conn) and re.compile('date={jobday}[a-zA-Z;=&0-9]{{0,100}}page='.format(jobday=self.jobday)).search(link):  # 안 읽은거 & jobday 일치하는 네비게이션페이지
                         queue.put(link)    
 
     # url이 네이버 뉴스 도메인인지 체크. 틀리면 None, 맞으면 https 까지 붙은 full url 반환.
