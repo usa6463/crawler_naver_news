@@ -133,6 +133,7 @@ class worker:
                 title = soup.select('#articleTitle')[0].text
                 content = soup.select('#articleBodyContents')[0].text
                 reg_dt = soup.select('span.t11')[0].text
+                writer = soup.select('#article_header')
 
                 p = re.compile('&oid=(\\d{1,100})&aid=(\\d{1,100})')
                 search_result = p.search(url)
@@ -145,6 +146,8 @@ class worker:
                 result['title'] = title
                 result['reg_dt'] = reg_dt
                 result['content'] = content
+                result['writer'] = writer 
+                print(result)
                 # self.send_kafka(result)
 
             except Exception as e:

@@ -175,3 +175,30 @@ https://news.naver.com/main/list.nhn?mode=LSD&mid=sec&sid1=104&date=20200517
 https://news.naver.com/main/list.nhn?mode=LSD&mid=sec&sid1=105&date=20200517
 https://news.naver.com/main/list.nhn?mode=LSD&mid=sec&sid1=110&date=20200517
 https://news.naver.com/main/list.nhn?mode=LPOD&sid2=140&sid1=001&mid=sec&oid=001&isYeonhapFlash=Y&date=20200517
+
+
+--------------------------------------
+check article 에서 true 아닌거 예
+https://news.naver.com/main/read.nhn?mode=LS2D&mid=shm&sid1=101&sid2=771&oid=001&aid=0011623035
+
+
+-------------------------------------------------------------------------------
+기사 제대로 읽어오는거 같음. 
+수짒 시간 단축필요함. 우선 동시 프로세스 숫자 10 -> 30으로 변경
+기존 소요시간 10시간정도였는듯. 3시간대로 줄어들길 희망
+한 4시간 정도로 줄어듬
+
+-------------------
+
+1. 크롤러 개선
+  - 댓글
+  - 댓글 작성자 아이디 
+  - 언론사 
+  - 표정
+  - 본문에서 주석제거 
+
+test.py에서 테스트중
+
+2. kafka 세팅
+
+3. ELK 세팅 
