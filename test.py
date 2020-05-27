@@ -15,7 +15,7 @@ soup = bs(html, 'html.parser')
 title = soup.select('#articleTitle')[0].text
 content = soup.select('#articleBodyContents')[0].text
 reg_dt = soup.select('span.t11')[0].text
-writer = soup.select('#article_header')
+writer = type(soup.div)
 
 p = re.compile('&oid=(\\d{1,100})&aid=(\\d{1,100})')
 search_result = p.search(url)
@@ -29,4 +29,7 @@ result['title'] = title
 result['reg_dt'] = reg_dt
 result['content'] = content
 result['writer'] = writer 
-print(result)
+
+for key in result:
+    print(key + ' : ' + str(result[key]))
+
