@@ -191,13 +191,8 @@ https://news.naver.com/main/read.nhn?mode=LS2D&mid=shm&sid1=101&sid2=771&oid=001
 -------------------
 
 1. 크롤러 개선
-  - 댓글
-  - 댓글 작성자 아이디 
-  - 언론사 
-  - 표정
-  - 본문에서 주석제거 
-
-test.py에서 테스트중
+  - 언론사 (O)
+  - 본문에서 주석제거 (O) 
 
 2. kafka 세팅
 

@@ -131,7 +131,12 @@ class worker:
                 soup = bs(html, 'html.parser')
 
                 title = soup.select('#articleTitle')[0].text
+
                 content = soup.select('#articleBodyContents')[0].text
+                content = re.compile('// flash 오류를 우회하기 위한 함수 추가').sub('', content)
+                content = re.compile('function _flash_removeCallback.*').sub('', content)
+                content = re.compile('\n').sub('', content)
+
                 reg_dt = soup.select('span.t11')[0].text
                 writer = soup.find('div', class_='press_logo').img['title']
 
