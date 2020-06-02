@@ -13,7 +13,6 @@ class worker:
 
     def worker_main(self, url, queue, logger, config, jobday):
         self.logger = logger
-        # self.logger.info('worker process : ' + url)
         self.config = config
         self.jobday = jobday
 
