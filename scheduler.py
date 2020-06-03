@@ -61,7 +61,7 @@ def set_db():
                 title varchar(100) NOT NULL,
                 content varchar(10000),
                 writer varchar(100) NOT NULL,
-                PRIMARY KEY (url),
+                PRIMARY KEY (oid, aid),
                 INDEX(url)
             );
         '''

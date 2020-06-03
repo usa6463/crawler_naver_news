@@ -108,12 +108,13 @@ class worker:
         else :
             return False
 
-    # url 페이지 안에 있는 모든 링크 파싱하여 반환
+    # url 페이지 안 content내에 있는 모든 링크 파싱하여 반환
     def get_links(self, url):
         req = requests.get(url)
         html = req.text
         soup = bs(html, 'html.parser')
-        links = soup.select('a[href]')
+        main_content = soup.find('td', class_='content')
+        links = main_content.select('a[href]')
         links = list(set([self.check_naver_news_page(link.get('href'), url) for link in links]))
         return links
 
