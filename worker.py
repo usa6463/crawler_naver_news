@@ -123,20 +123,26 @@ class worker:
         if not self.check_news_already_read(url, conn):
 
             try:
-                self.log_news_read(url,conn)
-
                 req = requests.get(url)
                 html = req.text
                 soup = bs(html, 'html.parser')
 
                 title = soup.select('#articleTitle')[0].text
+                title = re.compile("'").sub("\\'", title)
 
                 content = soup.select('#articleBodyContents')[0].text
                 content = re.compile('// flash 오류를 우회하기 위한 함수 추가').sub('', content)
                 content = re.compile('function _flash_removeCallback.*').sub('', content)
                 content = re.compile('\n').sub('', content)
+                content = re.compile("'").sub("\\'", content)
 
                 reg_dt = soup.select('span.t11')[0].text
+                modify_reg_dt = re.compile('오[전-후]').sub('', reg_dt)
+                dt = datetime.datetime.strptime(modify_reg_dt, '%Y.%m.%d.  %H:%M')
+                if re.compile('오후').search(reg_dt):
+                    dt = dt + datetime.timedelta(hours=12)
+                reg_dt = dt.strftime('%Y-%m-%d %H:%M')
+                
                 writer = soup.find('div', class_='press_logo').img['title']
 
                 p = re.compile('&oid=(\\d{1,100})&aid=(\\d{1,100})')
@@ -152,6 +158,8 @@ class worker:
                 result['content'] = content
                 result['writer'] = writer 
                 print(result)
+
+                self.log_news_read(url, conn, result)
                 # self.send_kafka(result)
 
             except Exception as e:
@@ -190,15 +198,16 @@ class worker:
 
 
     # 파싱한 뉴스 url임을 기록
-    def log_news_read(self, url, conn):
+    def log_news_read(self, url, conn, result):
         cursor = conn.cursor()
         cursor.execute('use {}'.format(self.config['db_database_name']))
         sql = '''
             insert into {table_name}
-            (url) values
-            ('{url_name}')
+            (url, news_regdatetime, oid, aid, title, content, writer) values
+            ('{url_name}', '{regdatetime}', {oid}, {aid}, '{title}', '{content}', '{writer}')
         '''
-        cursor.execute(sql.format(table_name=self.config['db_news_table_name'].format(jobday=self.jobday), url_name=url))
+        cursor.execute(sql.format(table_name=self.config['db_news_table_name'].format(jobday=self.jobday), url_name=url, regdatetime=result['reg_dt'], \
+            oid=result['oid'], aid=result['aid'], title=result['title'], content=result['content'], writer=result['writer']))
         conn.commit()
 
         return 

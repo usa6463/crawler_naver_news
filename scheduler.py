@@ -55,6 +55,12 @@ def set_db():
             create table {table_name} (
                 regdatetime datetime NOT NULL default CURRENT_TIMESTAMP,
                 url varchar(255) NOT NULL,
+                news_regdatetime datetime NOT NULL,
+                oid int NOT NULL,
+                aid int NOT NULL,
+                title varchar(100) NOT NULL,
+                content varchar(10000),
+                writer varchar(100) NOT NULL,
                 PRIMARY KEY (url),
                 INDEX(url)
             );
